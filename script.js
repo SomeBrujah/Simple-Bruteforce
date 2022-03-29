@@ -23,7 +23,12 @@ function bruteRec(beginLength = 1, maxLength = 5) {
         supposePass = genStringRec(allowChars, beginLength);
         if (!suppositions.includes(supposePass)) suppositions.push(supposePass);
         if (login(supposePass)) {
-            console.log(supposePass);
+            
+            console.group()
+            console.log(`Number of symbols in password is: ${beginLength}`);
+            console.log(`Number of itteration is: ${suppositions.length}`);
+            console.log(`Password is: ${supposePass}`);
+            console.groupEnd();
             return supposePass;
         }
         

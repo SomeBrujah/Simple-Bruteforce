@@ -57,4 +57,4 @@ function brute() {
     console.log(`This is right pass: ${rightPass}`);
 }
 
-// brute();
+bruteRec();

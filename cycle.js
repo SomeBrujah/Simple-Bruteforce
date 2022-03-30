@@ -1,23 +1,51 @@
-function perm(arr) {
-    console.log(arr);
-    const N = arr.length;
-    const p = arr.map( (_, i)=> i );
-    let i = 1;
+const allowChars = ['a', 'b', 'c', 'A', 'B', 'C'];
 
-    while(i < N) {
-        p[i]--;
-
-        j = i % 2 * p[i];
-        [arr[j], arr[i]] = [arr[i], arr[j]];
-
-        console.log(arr);
-
-        i = 1;
-        while(p[i] == 0) {
-            p[i] = i;
-            i += 1;
-        }
-    }
+function login(pass) {
+    return pass === 'aaBBc';
 }
 
-perm([0, 1, 2]);
+
+function brute(maxLength, symbolsArr) {
+    for (let beginLength = 1; beginLength <= maxLength; beginLength++) {
+        const passwordArray = createPassArray(beginLength);
+        
+
+        for (let currentTry = 1; currentTry <= Math.pow(symbolsArr.length, beginLength); currentTry++) {
+            let suggestPassword = createStringFromArray(passwordArray, symbolsArr);
+            increasePassArray(passwordArray, symbolsArr.length-1);
+            
+            if(login(suggestPassword)) {
+                return suggestPassword;
+            }
+        }
+    }
+    return 'Try it with bigger number';
+}
+
+function createPassArray(length) {
+    return new Array(length).fill(0);
+}
+
+function increasePassArray(arr, maxValue) {
+    if (arr.every((el) => { return el === maxValue })) {
+        return null;
+    }
+    for (let currIndex = arr.length - 1; currIndex >= 0; currIndex--) {
+        if (arr[currIndex] < maxValue) {
+            arr[currIndex]++
+            break;
+        }
+        arr[currIndex] = 0;
+    }
+    return arr;
+}
+
+function createStringFromArray(numArr, charArr) {
+    let string = '';
+    for (let i = 0; i < numArr.length; i++) {
+        string += charArr[numArr[i]];
+    }
+    return string;
+}
+console.log(brute(5, allowChars));
+// console.log(increasePassArray([3, 3, 2], 3));

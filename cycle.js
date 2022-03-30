@@ -5,20 +5,20 @@ function login(pass) {
 }
 
 
-function brute(maxLength, symbolsArr) {
+function* brute(maxLength, symbolsArr) {
     for (let beginLength = 1; beginLength <= maxLength; beginLength++) {
         const passwordArray = createPassArray(beginLength);
-        
 
         for (let currentTry = 1; currentTry <= Math.pow(symbolsArr.length, beginLength); currentTry++) {
             let suggestPassword = createStringFromArray(passwordArray, symbolsArr);
-            increasePassArray(passwordArray, symbolsArr.length-1);
-            
-            if(login(suggestPassword)) {
+            increasePassArray(passwordArray, symbolsArr.length - 1);
+
+             if (login(suggestPassword)) {
                 return suggestPassword;
             }
         }
     }
+
     return 'Try it with bigger number';
 }
 
@@ -48,4 +48,3 @@ function createStringFromArray(numArr, charArr) {
     return string;
 }
 console.log(brute(5, allowChars));
-// console.log(increasePassArray([3, 3, 2], 3));

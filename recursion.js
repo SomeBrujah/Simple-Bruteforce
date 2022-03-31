@@ -33,5 +33,6 @@ function genString(charArr, length, stringVariant = '') {
 }
 
 // console.log(genString(allowChars, 2));
-
-console.log(brute());
+console.time();
+console.log(brute(6));
+console.timeEnd();

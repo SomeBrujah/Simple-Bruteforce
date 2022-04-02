@@ -1,32 +1,18 @@
-const allowChars = ['a', 'b', 'c', 'A', 'B', 'C'];
+const allowedChars = ['a', 'b', 'c', 'A', 'B', 'C'];
 
-function login(pass) {
-    return pass === 'aaBBc';
-}
-
-
-function* brute(maxLength, symbolsArr) {
-    for (let beginLength = 1; beginLength <= maxLength; beginLength++) {
-        const passwordArray = createPassArray(beginLength);
-
-        for (let currentTry = 1; currentTry <= Math.pow(symbolsArr.length, beginLength); currentTry++) {
-            let suggestPassword = createStringFromArray(passwordArray, symbolsArr);
-            increasePassArray(passwordArray, symbolsArr.length - 1);
-
-             if (login(suggestPassword)) {
-                return suggestPassword;
+const login = function (password) {
+    return new Promise((resolve, reject) => {
+        setTimeout(() => {
+            if (password === 'ab') {
+                resolve(password);
+            } else {
+                reject(password)
             }
-        }
-    }
-
-    return 'Try it with bigger number';
+        }, Math.floor(Math.random() * 5) * 1000);
+    });
 }
 
-function createPassArray(length) {
-    return new Array(length).fill(0);
-}
-
-function increasePassArray(arr, maxValue) {
+function changeCombination(arr, maxValue) {
     if (arr.every((el) => { return el === maxValue })) {
         return null;
     }
@@ -40,11 +26,56 @@ function increasePassArray(arr, maxValue) {
     return arr;
 }
 
-function createStringFromArray(numArr, charArr) {
-    let string = '';
-    for (let i = 0; i < numArr.length; i++) {
-        string += charArr[numArr[i]];
+function* brute(chars, maxLength) {
+    for (let currentLength = 1; currentLength <= maxLength; currentLength++) {
+        const combination = new Array(currentLength).fill(0);
+        let variation = '';
+        for (let combNumber = 1; combNumber <= Math.pow(chars.length, currentLength); combNumber++) {
+            yield variation = combination.map((currentValue) => {
+                return chars[currentValue];
+            }).join('');
+
+            changeCombination(combination, chars.length - 1)
+        }
     }
-    return string;
+    return null;
 }
-console.log(brute(5, allowChars));
+
+const combinator = brute(allowedChars, 5);
+
+class Queue {
+    constructor(request, competition) {
+        this.request = request;
+        this.competition = competition;
+        this.successfulOutcome = null;
+    }
+
+    start() {
+        for (let i = 0; i < this.competition; i++) {
+            this.add(this.request);
+        }
+    }
+
+    add(request) {
+        this.execute(request)
+    }
+
+    execute(request) {
+        if (this.successfulOutcome === null) {
+            request(combinator.next().value).then((result) => {
+                console.log(`Password ${result} is correct`);
+                this.successfulOutcome = result;
+            }).catch((reason) => {
+                if (this.successfulOutcome !== null) return;
+                console.log(`Password ${reason} is wrong`);
+                this.add(request);
+            })
+        } else {
+            return this.successfulOutcome;
+        }
+    }
+}
+
+const queue = new Queue(login, 5);
+
+queue.start();

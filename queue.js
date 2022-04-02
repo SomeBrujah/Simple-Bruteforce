@@ -11,7 +11,7 @@ function task() {
 // Create array with task
 const tasksArr = new Array(30).fill(task);
 
-// Create our class
+// Объявляем наш класс
 class Queue {
     constructor(competition, tasks) {
         this.tasks = tasks;

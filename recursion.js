@@ -1,19 +1,19 @@
 const allowChars = ['a', 'b', 'c', 'A', 'B', 'C'];
 
 function login(password) {
-  return password === 'AcBcC'
+  return password === 'AcBC'
 }
 
 function brute(maxLength = 5) {
- 
- for (let i = 1; i <= maxLength; i++) {
-  let combinations = genString(allowChars, i);
-  for (let i = 0; i < combinations.length; i++) {
-    if(login(combinations[i])) return combinations[i];
-  }
- }
 
- return null;
+  for (let i = 1; i <= maxLength; i++) {
+    let combinations = genString(allowChars, i);
+    let rightPass = combinations[combinations.length - 1]
+    if(login(rightPass)) {
+      return rightPass;
+    }
+  }
+  return null;
 }
 
 
@@ -21,11 +21,13 @@ function genString(charArr, length, stringVariant = '') {
 
   if (stringVariant.length >= length) return new Array();
 
-  let collection = new Array();
+  let collection = [];
 
-  for(let i = 0; i < charArr.length; i++) {
-    let word = stringVariant+ charArr[i];
-    collection.push(word);
+  for (let i = 0; i < charArr.length; i++) {
+    let word = stringVariant + charArr[i];
+    if (login(word)) {
+      return word;
+    }
     collection = collection.concat(genString(charArr, length, stringVariant + charArr[i]));
   }
 

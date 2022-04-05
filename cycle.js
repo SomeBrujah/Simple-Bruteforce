@@ -113,7 +113,3 @@ queue.addEventListener('Failure', (err) => {
     queue.add([login, comb.value]);
     console.log(`Error: ${err}`);
 })
-
-// setInterval(()=>{
-//     console.log(queue.inProgress);
-// }, 100)

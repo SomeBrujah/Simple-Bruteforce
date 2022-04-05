@@ -3,7 +3,7 @@ const allowedChars = ['a', 'b', 'c', 'A', 'B', 'C'];
 const login = function (password) {
     return new Promise((resolve, reject) => {
         setTimeout(() => {
-            if (password === 'AB') {
+            if (password === 'ac') {
                 resolve(password);
             } else {
                 reject(password)
@@ -67,36 +67,53 @@ class Queue {
 
     add(request) {
         this.tasks.push(request);
-        if (this.inProgress < this.competition) {
-            this.execute(this.tasks.shift())
-        }
+        this.execute();
     }
 
-    execute(request) {
+    execute() {
+        if (this.tasks.length === 0) {
+            return;
+        }
+        if (this.inProgress >= this.competition) {
+            return;
+        }
+
+        let task = this.tasks.shift();
         this.inProgress++;
-        request[0](request[1]).then((res) => {
-            this.inProgress--
-            this.onSuccess(res);
+        task[0](task[1]).then((res) => {
+            this.inProgress--;
+            this.onSuccess && this.onSuccess(res);
         }).catch((err) => {
-            this.inProgress--
-            this.onFailure(err, this.tasks.shift())
+            this.inProgress--;
+            this.onFailure && this.onFailure(err)
         })
     }
 
-    onSuccess(result) {
-        console.log(`Damn it! This is success: ${result}`)
-        return result;
+    addEventListener(event, callback) {
+        this['on' + event] = callback;
     }
 
-    onFailure(reason, reqParam) {
-        console.log(`Some going wrong: ${reason}`)
-        if (this.tasks.length > 0) {
-            this.execute(reqParam);
-        }
-    }
+
 }
 
 const queue = new Queue(5);
-for (let i = 0; i < 31; i++) {
+for (let i = 0; i < queue.competition; i++) {
     queue.add([login, combinator.next().value]);
 }
+queue.addEventListener('Success', (res) => {
+    console.log(`Result: ${res}`);
+    combinator.return(res);
+})
+
+queue.addEventListener('Failure', (err) => {
+    let comb = combinator.next();
+    if (comb.done) {
+        return comb.value;
+    }
+    queue.add([login, comb.value]);
+    console.log(`Error: ${err}`);
+})
+
+// setInterval(()=>{
+//     console.log(queue.inProgress);
+// }, 100)
